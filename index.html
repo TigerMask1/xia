@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xia Playground — Local AI Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * {margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif;}
+  body {background: linear-gradient(135deg, #1e1e2f, #2b2b3f); color: #fff; overflow-x:hidden;}
+
+  .container {max-width:1200px; margin:0 auto; padding:40px 20px;}
+  
+  .hero {text-align:center; padding:80px 20px; position:relative;}
+  .hero-logo {width:120px; height:120px; margin:0 auto 20px; background:linear-gradient(45deg,#6b00b6,#ff00ff); border-radius:50%; box-shadow: 0 0 40px rgba(107,0,182,0.6); animation:logoGlow 2s infinite alternate;}
+  @keyframes logoGlow {0%{box-shadow:0 0 10px rgba(107,0,182,0.3);} 100%{box-shadow:0 0 40px rgba(107,0,182,0.8);}}
+  .hero h1 {font-size:3rem; margin-bottom:10px; animation:fadeIn 1s ease forwards;}
+  .hero p {font-size:1.2rem; color:#ccc; animation:fadeIn 1.5s ease forwards;}
+
+  .btn {display:inline-block; margin-top:30px; padding:15px 30px; font-size:1.1rem; font-weight:600; color:#fff; background:linear-gradient(45deg,#6b00b6,#ff00ff); border:none; border-radius:8px; cursor:pointer; box-shadow:0 5px 15px rgba(0,0,0,0.3); transition:0.3s;}
+  .btn:hover {transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,0.4);}
+
+  section {padding:60px 0; opacity:0; transform:translateY(40px); animation:fadeInUp 1s forwards; animation-delay:0.5s;}
+  section:nth-child(even){background:#222;}
+  section h2 {font-size:2rem; margin-bottom:20px; color:#ff99ff;}
+  section p {font-size:1.1rem; color:#ccc; line-height:1.6;}
+
+  @keyframes fadeIn {0%{opacity:0;}100%{opacity:1;}}
+  @keyframes fadeInUp {0%{opacity:0; transform:translateY(40px);}100%{opacity:1; transform:translateY(0);}}
+
+  /* Modal Styles */
+  .modal-bg {position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s;}
+  .modal-bg.active {opacity:1; pointer-events:auto;}
+  .modal {background:#2b2b3f; border-radius:15px; padding:30px; max-width:600px; width:90%; text-align:center; position:relative; box-shadow:0 10px 40px rgba(0,0,0,0.5); animation:slideIn 0.5s ease forwards;}
+  @keyframes slideIn {0%{transform:translateY(-50px); opacity:0;}100%{transform:translateY(0); opacity:1;}}
+  .modal h3 {font-size:1.8rem; margin-bottom:15px; color:#ff99ff;}
+  .modal p {font-size:1.1rem; color:#ccc; margin-bottom:20px; line-height:1.6; transition:0.3s;}
+  .modal .modal-btn {margin-top:10px;}
+  .hidden {display:none;}
+
+  /* Emoji animation */
+  .emoji {font-size:1.5rem; margin-right:6px; animation:emojiBounce 1s infinite alternate;}
+  @keyframes emojiBounce {0%{transform:translateY(0);}50%{transform:translateY(-8px);}100%{transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="hero">
+    <div class="hero-logo"></div>
+    <h1>Xia Playground</h1>
+    <p>Train, create, and chat with your own AI models — fully local, fully yours!</p>
+    <button class="btn" id="downloadBtn">Download App</button>
+  </div>
+
+  <section>
+    <h2>About Xia Playground</h2>
+    <p>
+      Xia Playground is a local AI studio that makes training and using AI models super easy for everyone! 
+      Build your own chatbots, assistants, and custom models — all offline, fully on your computer. 
+      No cloud required. No data leaks. Your models, your rules. 
+    </p>
+  </section>
+
+  <section>
+    <h2>Why It's Awesome</h2>
+    <p>
+      🚀 Fully Local — Your AI never leaves your PC.<br>
+      🎨 Custom Models — Name your bot, select a base, train your dataset.<br>
+      ⚡ Easy to Use — Friendly UI, instant chat, training logs.<br>
+      📂 Share Models — Export & share your models with friends!<br>
+      🎉 Fun & Interactive — Animated chats, emojis, and playful messages.
+    </p>
+  </section>
+
+  <section>
+    <h2>Tips & Limitations</h2>
+    <p>
+      ⚠️ Small training datasets can make your models less accurate.<br>
+      🧠 More data = smarter models!<br>
+      📢 Your AI won't be perfect instantly — but keep training, have fun, and experiment.<br>
+      🔑 Make sure to give Xia permission to write files for saving models.
+    </p>
+  </section>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h3 id="modalTitle">🎉 Ready to Download!</h3>
+    <p id="modalMsg">Click "Next" to see some tips before downloading.</p>
+    <button class="btn modal-btn" id="nextBtn">Next ➡️</button>
+    <a href="#" id="finalDownload" class="btn modal-btn hidden" download>Download Xia</a>
+  </div>
+</div>
+
+<script>
+const modal = document.getElementById('modal');
+const downloadBtn = document.getElementById('downloadBtn');
+const nextBtn = document.getElementById('nextBtn');
+const modalMsg = document.getElementById('modalMsg');
+const finalDownload = document.getElementById('finalDownload');
+
+const messages = [
+  "🎉 Yay! You clicked download! But... 🤔",
+  "💡 Heads up: The logo may not show in your taskbar or header 😅",
+  "🤖 Xia is your personal local AI assistant — train it, chat with it, have fun!",
+  "📚 Tip: Small training datasets → less efficient models. Don't lose hope!",
+  "🌐 Share your models with others and show off your creations!",
+  "✨ Remember: Fully local, fully fun, fully yours! Enjoy!"
+];
+
+let currentMsg = 0;
+
+downloadBtn.addEventListener('click', () => {
+  modal.classList.add('active');
+  modalMsg.innerHTML = messages[currentMsg];
+});
+
+nextBtn.addEventListener('click', () => {
+  currentMsg++;
+  if(currentMsg < messages.length){
+    modalMsg.innerHTML = messages[currentMsg];
+  } else {
+    nextBtn.classList.add('hidden');
+    finalDownload.classList.remove('hidden');
+    finalDownload.href = "https://drive.google.com/file/d/1kuEVCtHOlgoxINotsWfRXwuGF1NxpPY5/view?usp=drive_link";
+    modalMsg.innerHTML = "✅ All set! Click below to download Xia Playground!";
+  }
+});
+</script>
+
+</body>
+</html>
